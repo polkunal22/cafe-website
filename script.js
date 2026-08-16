@@ -14,11 +14,19 @@ const dishes = [
   item("Veg Thali", "Thali", 160, "₹160", true), item("Special Veg Thali", "Thali", 220), item("Chicken Thali", "Thali", 310), item("Fry Papad", "Papad", 20), item("Roasted Papad", "Papad", 20), item("Masala Papad", "Papad", 50)
 ];
 
+const signatureImages = {
+  "Veg Grilled Sandwich": "image/signature/veg-grilled-sandwich.png",
+  "White Sauce Pasta": "image/signature/white-sauce-pasta.png",
+  "Chole Bhature": "image/signature/chole-bhature.png",
+  "Chicken Momo Steam": "image/signature/chicken-steamed-momo.png",
+  "Chicken Biryani": "image/signature/chicken-biryani.png",
+  "Paneer Butter Masala": "image/signature/paneer-butter-masala.png",
+  "Veg Thali": "image/signature/veg-thali.png"
+};
+
 const $ = selector => document.querySelector(selector);
-const money = number => `₹${number}`;
 let activeCategory = "All";
 let fullMenu = false;
-let cart = [];
 
 function renderFilters() {
   const filters = $("#filters");
@@ -39,10 +47,10 @@ function renderFilters() {
 function setMenuMode(showFull) {
   fullMenu = showFull;
   activeCategory = "All";
-  $("#menuTitle").innerHTML = showFull ? "Complete <em>menu.</em>" : "Signature <em>dishes.</em>";
-  $("#menuDescription").textContent = showFull ? `${dishes.length} dishes from our complete café menu.` : "A small selection of customer favourites.";
-  $("#viewFullMenu").textContent = showFull ? "Show signature dishes" : "View complete menu";
+  $("#menuTitle").innerHTML = showFull ? "Our <em>menu.</em>" : "Signature <em>dishes.</em>";
+  $("#menuDescription").textContent = showFull ? `${dishes.length} freshly prepared choices.` : "A small selection of customer favourites.";
   $("#menuTools").classList.toggle("signature-tools", !showFull);
+  $("#menu").classList.toggle("signature-view", !showFull);
   $("#menuSearch").value = "";
   renderFilters();
   renderMenu();
@@ -59,41 +67,13 @@ function renderMenu() {
   visible.forEach(dish => {
     const card = document.createElement("article");
     card.className = "dish";
-    card.innerHTML = `<div><div class="dish-top"><h3>${dish.name}</h3><span class="price">${dish.priceLabel}</span></div><p>${dish.category}</p></div>${dish.price === null ? '<span class="unavailable">Confirm price with our team</span>' : '<button type="button">+ Add to order</button>'}`;
-    const addButton = card.querySelector("button");
-    if (addButton) addButton.addEventListener("click", () => addToCart(dish));
+    const image = !fullMenu && signatureImages[dish.name]
+      ? `<div class="dish-image"><img src="${signatureImages[dish.name]}" alt="${dish.name}" loading="lazy"></div>`
+      : "";
+    card.innerHTML = `${image}<div class="dish-content"><div class="dish-top"><h3>${dish.name}</h3><span class="price">${dish.priceLabel}</span></div><p>${dish.category}</p>${dish.price === null ? '<span class="unavailable">Confirm price with our team</span>' : ""}</div>`;
     menuGrid.append(card);
   });
   if (!visible.length) menuGrid.innerHTML = "<p>No dishes found. Try another search.</p>";
-}
-
-function addToCart(dish) {
-  const existing = cart.find(row => row.name === dish.name);
-  existing ? existing.qty++ : cart.push({ ...dish, qty: 1 });
-  updateCart();
-  showToast(`${dish.name} added`);
-}
-
-function updateCart() {
-  const cartItems = $("#cartItems");
-  $("#cartCount").textContent = cart.reduce((sum, row) => sum + row.qty, 0);
-  $("#cartTotal").textContent = money(cart.reduce((sum, row) => sum + row.price * row.qty, 0));
-  cartItems.innerHTML = cart.length ? "" : '<div class="empty">Your bag is empty.<br>Add something delicious from the menu.</div>';
-  cart.forEach((row, index) => {
-    const element = document.createElement("div");
-    element.className = "cart-item";
-    element.innerHTML = `<div><b>${row.name}</b><small>${money(row.price)} each</small></div><div class="qty"><button aria-label="Remove one">−</button><span>${row.qty}</span><button aria-label="Add one">+</button></div>`;
-    const buttons = element.querySelectorAll("button");
-    buttons[0].onclick = () => { if (!--row.qty) cart.splice(index, 1); updateCart(); };
-    buttons[1].onclick = () => { row.qty++; updateCart(); };
-    cartItems.append(element);
-  });
-}
-
-function toggleCart(open) {
-  $("#cart").classList.toggle("open", open);
-  $("#overlay").classList.toggle("open", open);
-  document.body.style.overflow = open ? "hidden" : "";
 }
 
 function showToast(message) {
@@ -104,19 +84,8 @@ function showToast(message) {
   window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
-$("#viewFullMenu").onclick = () => setMenuMode(!fullMenu);
-$("#menuNav").onclick = () => setMenuMode(true);
+document.querySelectorAll('a[href="#menu"]').forEach(link => link.addEventListener("click", () => setMenuMode(true)));
 $("#menuSearch").oninput = renderMenu;
-$("#cartButton").onclick = () => toggleCart(true);
-$("#cartClose").onclick = () => toggleCart(false);
-$("#overlay").onclick = () => toggleCart(false);
-$("#sendOrder").onclick = () => {
-  if (!cart.length) return showToast("Please add an item first");
-  const total = cart.reduce((sum, row) => sum + row.price * row.qty, 0);
-  const lines = cart.map(row => `• ${row.name} × ${row.qty} = ${money(row.price * row.qty)}`).join("\n");
-  open(`https://wa.me/${PHONE}?text=${encodeURIComponent(`Hello Cafe By Pass! I would like to order:\n\n${lines}\n\nEstimated total: ${money(total)}\n\nPlease confirm availability and final price.`)}`, "_blank");
-};
-
 for (let number = 1; number <= 30; number++) $("#guests").add(new Option(`${number} ${number === 1 ? "guest" : "guests"}`, number));
 $("#date").min = new Date().toISOString().split("T")[0];
 $("#phone").oninput = event => event.target.value = event.target.value.replace(/\D/g, "").slice(0, 10);
@@ -138,4 +107,3 @@ const observer = new IntersectionObserver(entries => entries.forEach(entry => {
 document.querySelectorAll(".reveal").forEach(element => observer.observe(element));
 $("#year").textContent = new Date().getFullYear();
 setMenuMode(false);
-updateCart();
