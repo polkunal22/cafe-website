@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --ink: #1c1712;
   --cream: #f4eee3;
   --paper: #fffaf2;
@@ -156,7 +156,9 @@ em {
 }
 .actions {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 .btn {
   border: 0;
@@ -177,6 +179,66 @@ em {
   border: 1px solid var(--ink);
   background: transparent;
   color: var(--ink);
+}
+.hero .actions .btn {
+  min-height: 62px;
+  padding: 0 25px;
+  gap: 18px;
+  align-items: center;
+  border: 1px solid var(--ink);
+  font-size: 16px;
+  letter-spacing: -.01em;
+  box-shadow: 0 12px 28px rgba(28,23,18,.12);
+  transition: transform .25s ease,box-shadow .25s ease,background .25s ease,color .25s ease,border-color .25s ease;
+}
+.hero .actions .hero-primary {
+  min-width: 236px;
+  justify-content: space-between;
+  background: linear-gradient(135deg,#231c16,var(--ink));
+}
+.hero .actions .btn-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  font-size: 18px;
+  transition: transform .25s ease,background .25s ease;
+}
+.hero .actions .hero-secondary {
+  background: rgba(255,250,242,.42);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+}
+.hero .actions .hero-secondary svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hero .actions .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 17px 34px rgba(28,23,18,.18);
+}
+.hero .actions .hero-primary:hover {
+  border-color: var(--rust);
+  background: var(--rust);
+}
+.hero .actions .hero-primary:hover .btn-icon {
+  transform: translateX(3px);
+  background: rgba(255,255,255,.2);
+}
+.hero .actions .hero-secondary:hover {
+  border-color: var(--rust);
+  background: var(--paper);
+  color: var(--rust);
+}
+.hero .actions .btn:focus-visible {
+  outline: 3px solid rgba(164,73,39,.3);
+  outline-offset: 4px;
 }
 .facts {
   display: flex;
@@ -357,13 +419,47 @@ em {
   color: #695e52;
 }
 .menu-intro {
-  max-width: 360px;
+  position: relative;
+  width: min(100%,390px);
+  padding: 25px 66px 25px 27px;
+  overflow: hidden;
+  border: 1px solid rgba(28,23,18,.12);
+  border-left: 3px solid var(--rust);
+  border-radius: 10px;
+  background: rgba(255,250,242,.34);
+  box-shadow: 0 14px 35px rgba(52,33,15,.06);
   color: #695e52;
 }
-.menu-intro .btn {
-  margin-top: 12px;
-  padding: 11px 18px;
-  font-size: 13px;
+.menu-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg,rgba(255,255,255,.28),transparent 55%);
+  pointer-events: none;
+}
+.menu-intro-label {
+  position: relative;
+  display: block;
+  margin-bottom: 9px;
+  color: var(--rust);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.menu-intro p {
+  position: relative;
+  margin: 0;
+  color: #4f453b;
+  font: 600 20px/1.45 var(--serif);
+}
+.menu-intro-mark {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  color: rgba(164,73,39,.42);
+  font-size: 25px;
+  transform: translateY(-50%);
 }
 .tools {
   display: flex;
@@ -461,7 +557,7 @@ em {
   padding-bottom: .08em;
 }
 .signature-view .menu-intro {
-  padding-top: 18px;
+  margin-top: 8px;
 }
 .signature-view .menu-grid {
   grid-template-columns: repeat(4,minmax(0,1fr));
@@ -1163,6 +1259,13 @@ aside.open {
   }
   .actions {
     flex-direction: column;
+    align-items: stretch;
+  }
+  .hero .actions .btn {
+    width: 100%;
+  }
+  .hero .actions .hero-secondary {
+    justify-content: center;
   }
   .hero-art {
     width: min(86vw,380px);
@@ -1206,7 +1309,9 @@ aside.open {
     margin-bottom: 36px;
   }
   .signature-view .menu-intro {
-    padding-top: 12px;
+    width: 100%;
+    margin-top: 24px;
+    padding: 22px 58px 22px 23px;
   }
   .search {
     margin-top: 15px;
