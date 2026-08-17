@@ -59,10 +59,17 @@ function setMenuMode(showFull) {
 function renderMenu() {
   const query = $("#menuSearch").value.trim().toLowerCase();
   const menuGrid = $("#menuGrid");
+  const matchesQuery = dish => {
+    if (!query) return true;
+    return [dish.name, dish.category].some(value => value.toLowerCase().includes(query));
+  };
+
   const visible = dishes.filter(dish => {
-    if (!fullMenu) return dish.signature;
-    return (activeCategory === "All" || dish.category === activeCategory) && dish.name.toLowerCase().includes(query);
+    const categoryMatch = activeCategory === "All" || dish.category === activeCategory;
+    const signatureMatch = !fullMenu ? dish.signature : true;
+    return categoryMatch && signatureMatch && matchesQuery(dish);
   });
+
   menuGrid.innerHTML = "";
   visible.forEach(dish => {
     const card = document.createElement("article");
