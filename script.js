@@ -48,7 +48,7 @@ function setMenuMode(showFull) {
   fullMenu = showFull;
   activeCategory = "All";
   $("#menuTitle").innerHTML = showFull ? "Our <em>menu.</em>" : "Signature <em>dishes.</em>";
-  $("#menuDescription").textContent = showFull ? `${dishes.length} freshly prepared choices.` : "A small selection of customer favourites.";
+  $("#menuDescription").textContent = showFull ? `${dishes.length} freshly prepared choices.` : "Customer favourites, freshly made to turn every meal into a memorable moment.";
   $("#menuTools").classList.toggle("signature-tools", !showFull);
   $("#menu").classList.toggle("signature-view", !showFull);
   $("#menuSearch").value = "";
